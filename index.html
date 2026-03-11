@@ -511,5 +511,578 @@ footer{border-top:1px solid var(--border);padding:2.3rem 2rem}
     obs.observe(el);
   });
 </script>
+
+  Copiar desde aquí hasta FIN POPUP
+       y pegar antes de </body> en tu sitio
+    ═════════════════════════════════════════════ */
+
+    @keyframes lv-overlayIn { from { opacity:0; }            to { opacity:1; } }
+    @keyframes lv-cardIn    { from { opacity:0; transform:translateY(24px) scale(.97); }
+                               to   { opacity:1; transform:translateY(0)    scale(1);  } }
+    @keyframes lv-float     { 0%,100%{ transform:translateY(0);  } 50%{ transform:translateY(-8px); } }
+    @keyframes lv-fadeIn    { from { opacity:0; transform:translateY(12px); }
+                               to   { opacity:1; transform:translateY(0);   } }
+    @keyframes lv-pop       { 0%{transform:scale(0);} 60%{transform:scale(1.12);} 100%{transform:scale(1);} }
+
+    /* Overlay */
+    #lv-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.65);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: lv-overlayIn .35s ease;
+    }
+    #lv-overlay.active { display: flex; }
+
+    /* Card */
+    #lv-card {
+      position: relative;
+      width: 100%;
+      max-width: 520px;
+      background: rgba(14,46,42,.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(232,200,122,.2);
+      border-radius: 20px;
+      padding: 48px 44px;
+      box-shadow: 0 32px 80px rgba(0,0,0,.5);
+      overflow: hidden;
+      animation: lv-cardIn .55s cubic-bezier(.34,1.46,.64,1);
+    }
+    @media (max-width: 540px) { #lv-card { padding: 38px 24px; } }
+
+
+
+    /* Botón cerrar X */
+    #lv-close {
+      position: absolute;
+      top: 14px; right: 16px;
+      background: none;
+      border: none;
+      color: rgba(90,138,130,.55);
+      font-size: 19px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 5px 9px;
+      border-radius: 8px;
+      transition: color .2s, background .2s;
+      z-index: 10;
+      font-family: 'Pangram', sans-serif;
+    }
+    #lv-close:hover { color: #c0527a; background: rgba(192,82,122,.1); }
+
+    /* Inner */
+    #lv-inner { position: relative; z-index: 1; }
+
+    /* Header */
+    .lv-header { text-align: center; margin-bottom: 36px; }
+    .lv-bird {
+      display: inline-block;
+      animation: lv-float 3s ease-in-out infinite;
+      margin-bottom: 16px;
+    }
+    .lv-title {
+      font-family: 'Crake', serif;
+      font-style: italic;
+      color: #e8c87a;
+      font-size: 32px;
+      line-height: 1.2;
+      margin-bottom: 8px;
+      font-weight: 400;
+    }
+    .lv-subtitle {
+      font-family: 'Pangram', sans-serif;
+      color: #8ab8b0;
+      font-size: 13px;
+      letter-spacing: .12em;
+    }
+    .lv-divider {
+      width: 60px; height: 1px;
+      background: linear-gradient(90deg, transparent, #c0527a, transparent);
+      margin: 20px auto 0;
+    }
+
+    /* Inputs */
+    .lv-field { margin-bottom: 16px; }
+    .lv-label {
+      display: block;
+      font-family: 'Pangram', sans-serif;
+      color: #a0c4bc;
+      font-size: 11px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .lv-input {
+      width: 100%;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(232,200,122,.3);
+      border-radius: 10px;
+      padding: 13px 16px;
+      color: #f0e8d0;
+      font-family: 'Pangram', sans-serif;
+      font-size: 15px;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .lv-input:focus  { border-color: rgba(232,200,122,.7); }
+    .lv-input::placeholder { color: #5a8a82; }
+
+    /* Checkboxes */
+    .lv-checks-label {
+      font-family: 'Pangram', sans-serif;
+      color: #a0c4bc;
+      font-size: 11px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .lv-check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      transition: border-color .2s, background .2s;
+      margin-bottom: 4px;
+    }
+    .lv-check-row:hover          { background: rgba(255,255,255,.03); border-color: rgba(192,82,122,.2); }
+    .lv-check-row.active-gold    { border-color: rgba(232,200,122,.35); background: rgba(232,200,122,.05); }
+    .lv-check-row.active-magenta { border-color: rgba(192,82,122,.4);  background: rgba(192,82,122,.06); }
+
+    .lv-box {
+      width: 20px; height: 20px; min-width: 20px;
+      border-radius: 5px;
+      border: 2px solid rgba(255,255,255,.2);
+      background: transparent;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s;
+      margin-top: 1px;
+    }
+    .lv-box.gold    { border-color: #e8c87a; background: rgba(232,200,122,.18); }
+    .lv-box.magenta { border-color: #c0527a; background: rgba(192,82,122,.18);  }
+
+    .lv-tick { font-size: 13px; font-weight: bold; display: none; }
+    .lv-tick.gold    { color: #e8c87a; }
+    .lv-tick.magenta { color: #c0527a; }
+    .lv-box.gold    .lv-tick.gold    { display: block; }
+    .lv-box.magenta .lv-tick.magenta { display: block; }
+
+    .lv-check-title {
+      font-family: 'Pangram', sans-serif;
+      color: #f0e8d0;
+      font-size: 14px;
+    }
+    .lv-check-desc {
+      font-family: 'Pangram', sans-serif;
+      color: #6a9a92;
+      font-size: 12px;
+      margin-top: 2px;
+      font-style: italic;
+    }
+
+    /* Submit */
+    .lv-btn {
+      background: linear-gradient(135deg, #c0527a, #8b3a5a);
+      border: none;
+      color: #f0e8d0;
+      padding: 15px 32px;
+      width: 100%;
+      border-radius: 10px;
+      font-family: 'Crake', serif;
+      font-size: 18px;
+      letter-spacing: .08em;
+      cursor: pointer;
+      transition: all .3s;
+      margin-top: 8px;
+    }
+    .lv-btn:hover:not(:disabled) { transform:translateY(-1px); box-shadow: 0 8px 24px rgba(192,82,122,.35); }
+    .lv-btn:disabled { opacity:.5; cursor:default; transform:none; }
+
+    /* Mensajes */
+    .lv-msg {
+      font-family: 'Pangram', sans-serif;
+      font-size: 13px;
+      text-align: center;
+      font-style: italic;
+      min-height: 18px;
+      margin-top: 6px;
+    }
+    .lv-msg.error  { color: #c0527a; }
+    .lv-msg.exists { color: #e8c87a; }
+
+    /* Pantalla éxito */
+    #lv-success {
+      display: none;
+      text-align: center;
+      animation: lv-fadeIn .6s ease;
+      padding: 20px 0;
+    }
+    .lv-success-icon {
+      font-size: 48px;
+      display: block;
+      margin-bottom: 20px;
+      animation: lv-pop .5s cubic-bezier(.34,1.56,.64,1),
+                 lv-float 2.5s ease-in-out infinite .5s;
+    }
+    .lv-success-h2 {
+      font-family: 'Crake', serif;
+      font-style: italic;
+      color: #e8c87a;
+      font-size: 28px;
+      margin-bottom: 12px;
+      font-weight: 400;
+    }
+    .lv-success-p {
+      font-family: 'Pangram', sans-serif;
+      color: #8ab8b0;
+      font-size: 15px;
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+    .lv-success-line {
+      width: 80px; height: 1px;
+      background: linear-gradient(90deg, transparent, #c0527a, transparent);
+      margin: 0 auto;
+    }
+
+    /* Footer admin */
+    .lv-footer {
+      margin-top: 28px;
+      border-top: 1px solid rgba(255,255,255,.06);
+      padding-top: 18px;
+      text-align: center;
+    }
+    .lv-admin-btn {
+      background: none; border: none;
+      color: #3a6a62;
+      font-family: 'Pangram', sans-serif;
+      font-size: 11px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: color .2s;
+    }
+    .lv-admin-btn:hover { color: #6a9a92; }
+    .lv-admin-row { display: flex; gap: 8px; }
+    .lv-admin-row .lv-input { flex:1; font-size:14px; padding:9px 14px; }
+    .lv-admin-go {
+      background: rgba(192,82,122,.2);
+      border: 1px solid rgba(192,82,122,.4);
+      color: #e8c87a;
+      padding: 9px 16px;
+      border-radius: 10px;
+      font-family: 'Pangram', sans-serif;
+      cursor: pointer; font-size: 14px;
+      transition: background .2s;
+    }
+    .lv-admin-go:hover { background: rgba(192,82,122,.35); }
+
+  </style>
+</head>
+<body>
+
+  <!-- Fondo demo (eliminar en producción) -->
+  <div class="demo-bg">
+    <h1>La Voz y sus Pajaristicos</h1>
+    <p>El popup aparece a los 5 segundos</p>
+    <button class="demo-reset" onclick="lvReset()">↺ Reiniciar demo</button>
+  </div>
+
+  <!-- ═════════════════════════════════════════════
+       INICIO POPUP
+       Pegar justo antes de </body> en tu sitio
+  ═════════════════════════════════════════════ -->
+
+  <div id="lv-overlay" role="dialog" aria-modal="true" aria-label="Newsletter La Voz y sus Pajaristicos">
+    <div id="lv-card">
+
+      <button id="lv-close" onclick="lvCerrar()" aria-label="Cerrar">✕</button>
+
+
+      <div id="lv-inner">
+
+        <!-- ── Vista formulario ── -->
+        <div id="lv-form">
+          <div class="lv-header">
+            <div class="lv-bird">
+              <svg width="32" height="32" viewBox="0 0 28 28" fill="none">
+                <path d="M22 8 C22 8 18 6 14 9 C10 12 8 16 8 16 L6 15 C6 15 5 18 8 19 C8 19 9 22 12 21 L11 19 C11 19 15 20 18 17 C21 14 24 10 22 8Z" fill="#e8c87a" stroke="#c8a855" stroke-width=".5"/>
+                <circle cx="21" cy="9" r="1.5" fill="#1a3a3a"/>
+                <path d="M6 15 C4 13 3 11 4 9" stroke="#e8c87a" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h1 class="lv-title">La Voz y sus Pajaristicos</h1>
+            <p class="lv-subtitle">newsletter · clases de canto · talleres</p>
+            <div class="lv-divider"></div>
+          </div>
+
+          <div class="lv-field">
+            <label class="lv-label" for="lv-nombre">Nombre</label>
+            <input class="lv-input" id="lv-nombre" type="text" placeholder="tu nombre" autocomplete="given-name"/>
+          </div>
+
+          <div class="lv-field">
+            <label class="lv-label" for="lv-email">Email</label>
+            <input class="lv-input" id="lv-email" type="email" placeholder="tu@email.com" autocomplete="email"/>
+          </div>
+
+          <div style="margin-bottom:20px">
+            <p class="lv-checks-label">Quiero recibir</p>
+
+            <div class="lv-check-row active-gold" id="lv-row-nl" onclick="lvToggle('nl')">
+              <div class="lv-box gold" id="lv-box-nl">
+                <span class="lv-tick gold">✓</span>
+              </div>
+              <div>
+                <p class="lv-check-title">Newsletter La Voz y sus Pajaristicos</p>
+                <p class="lv-check-desc">Reflexiones, textos y exploraciones sobre la voz cantada</p>
+              </div>
+            </div>
+
+            <div class="lv-check-row" id="lv-row-tt" onclick="lvToggle('tt')">
+              <div class="lv-box" id="lv-box-tt">
+                <span class="lv-tick magenta">✓</span>
+              </div>
+              <div>
+                <p class="lv-check-title">Novedades de talleres y clases de canto</p>
+                <p class="lv-check-desc">Información sobre talleres, intensivos y clases con Ada Gomiz</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="lv-msg" id="lv-msg"></div>
+
+          <button class="lv-btn" id="lv-btn" onclick="lvEnviar()">
+            anotarme ✦
+          </button>
+
+          <div class="lv-footer">
+            <div id="lv-admin-link-wrap">
+              <button class="lv-admin-btn" onclick="lvMostrarAdmin()">Administrar</button>
+            </div>
+            <div id="lv-admin-input-wrap" style="display:none">
+              <div class="lv-admin-row">
+                <input class="lv-input" id="lv-admin-pass" type="password" placeholder="contraseña"
+                  onkeydown="if(event.key==='Enter') lvAdmin()"/>
+                <button class="lv-admin-go" onclick="lvAdmin()">→</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Vista éxito ── -->
+        <div id="lv-success">
+          <span class="lv-success-icon">🪶</span>
+          <h2 class="lv-success-h2">¡Ya estás anotada!</h2>
+          <p class="lv-success-p" id="lv-success-txt">
+            Vas a recibir el newsletter y novedades de talleres.
+          </p>
+          <div class="lv-success-line"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+
+    /* ──────────────────────────────────────────
+       CONFIGURACIÓN
+    ────────────────────────────────────────── */
+    var CFG = {
+      // ► Pegá aquí el endpoint de Formspree
+      // Ejemplo: "https://formspree.io/f/xpwzabcd"
+      formspree: "REEMPLAZAR_CON_URL_DE_FORMSPREE",
+
+      delaySeg:    5,      // segundos antes de mostrar
+      diasCerrado: 7,      // días sin mostrar si cerraron sin anotarse
+      adminPass:   "voz2025"
+    };
+
+    /* ──────────────────────────────────────────
+       ESTADO
+    ────────────────────────────────────────── */
+    var est = { nl: true, tt: false };
+
+    /* ──────────────────────────────────────────
+       MOSTRAR / CERRAR
+    ────────────────────────────────────────── */
+    function debesMostrar() {
+      try {
+        var d = JSON.parse(localStorage.getItem("lv_p") || "{}");
+        return !d.hasta || Date.now() > d.hasta;
+      } catch(e) { return true; }
+    }
+
+    function marcarVisto(definitivo) {
+      var dias = definitivo ? 365 : CFG.diasCerrado;
+      localStorage.setItem("lv_p", JSON.stringify({ hasta: Date.now() + dias*86400000 }));
+    }
+
+    window.lvCerrar = function() {
+      document.getElementById("lv-overlay").classList.remove("active");
+      marcarVisto(false);
+    };
+
+    function lvMostrar() {
+      document.getElementById("lv-overlay").classList.add("active");
+    }
+
+    document.getElementById("lv-overlay").addEventListener("click", function(e) {
+      if (e.target === this) lvCerrar();
+    });
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape") lvCerrar();
+    });
+
+    /* ──────────────────────────────────────────
+       CHECKBOXES
+    ────────────────────────────────────────── */
+    window.lvToggle = function(key) {
+      est[key] = !est[key];
+      var row = document.getElementById("lv-row-" + key);
+      var box = document.getElementById("lv-box-" + key);
+      var cls = key === "nl" ? "gold" : "magenta";
+      var rowCls = key === "nl" ? "active-gold" : "active-magenta";
+
+      if (est[key]) {
+        row.classList.add(rowCls);
+        box.classList.add(cls);
+      } else {
+        row.classList.remove(rowCls);
+        box.classList.remove(cls);
+      }
+      document.getElementById("lv-msg").textContent = "";
+    };
+
+    /* ──────────────────────────────────────────
+       ENVIAR
+    ────────────────────────────────────────── */
+    window.lvEnviar = async function() {
+      var nombre = document.getElementById("lv-nombre").value.trim();
+      var email  = document.getElementById("lv-email").value.trim();
+      var btn    = document.getElementById("lv-btn");
+
+      if (!nombre) { lvMsg("Por favor escribí tu nombre.", "error"); return; }
+      if (!email || !/\S+@\S+\.\S+/.test(email)) {
+        lvMsg("El email no parece válido.", "error"); return;
+      }
+      if (!est.nl && !est.tt) {
+        lvMsg("Seleccioná al menos una opción.", "error"); return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "anotando...";
+
+      /* — Enviar a Formspree — */
+      if (CFG.formspree && CFG.formspree !== "REEMPLAZAR_CON_URL_DE_FORMSPREE") {
+        try {
+          await fetch(CFG.formspree, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            body: JSON.stringify({
+              nombre:     nombre,
+              email:      email,
+              newsletter: est.nl ? "Sí" : "No",
+              talleres:   est.tt ? "Sí" : "No"
+            })
+          });
+        } catch(e) { console.warn("Formspree:", e); }
+      }
+
+      /* — Guardar local — */
+      try {
+        var lista = JSON.parse(localStorage.getItem("lv_s") || "[]");
+        if (!lista.some(function(s){ return s.email.toLowerCase() === email.toLowerCase(); })) {
+          lista.push({ nombre:nombre, email:email, nl:est.nl, tt:est.tt,
+                       fecha: new Date().toLocaleDateString("es-AR") });
+          localStorage.setItem("lv_s", JSON.stringify(lista));
+        }
+      } catch(e) {}
+
+      /* — Pantalla de éxito — */
+      document.getElementById("lv-success-txt").textContent =
+        est.nl && est.tt ? "Vas a recibir el newsletter y novedades de talleres." :
+        est.nl           ? "Vas a recibir el newsletter La Voz y sus Pajaristicos." :
+                           "Vas a recibir novedades de talleres y clases de canto.";
+
+      document.getElementById("lv-form").style.display    = "none";
+      document.getElementById("lv-success").style.display = "block";
+      marcarVisto(true);
+      setTimeout(lvCerrar, 3500);
+    };
+
+    function lvMsg(txt, tipo) {
+      var el = document.getElementById("lv-msg");
+      el.textContent = txt;
+      el.className   = "lv-msg " + tipo;
+    }
+
+    /* ──────────────────────────────────────────
+       ADMIN
+    ────────────────────────────────────────── */
+    window.lvMostrarAdmin = function() {
+      document.getElementById("lv-admin-link-wrap").style.display  = "none";
+      document.getElementById("lv-admin-input-wrap").style.display = "block";
+      document.getElementById("lv-admin-pass").focus();
+    };
+
+    window.lvAdmin = function() {
+      if (document.getElementById("lv-admin-pass").value !== CFG.adminPass) {
+        document.getElementById("lv-admin-pass").value = ""; return;
+      }
+      var lista = JSON.parse(localStorage.getItem("lv_s") || "[]");
+      alert("Suscriptas (" + lista.length + "):\n\n" +
+        lista.map(function(s){
+          return s.nombre + " — " + s.email +
+                 (s.nl ? " [newsletter]" : "") + (s.tt ? " [talleres]" : "");
+        }).join("\n")
+      );
+    };
+
+    /* ──────────────────────────────────────────
+       INICIO
+    ────────────────────────────────────────── */
+    if (debesMostrar()) {
+      setTimeout(lvMostrar, CFG.delaySeg * 1000);
+    }
+
+  })();
+
+  /* —— Solo para el demo —— */
+  function lvReset() {
+    localStorage.removeItem("lv_p");
+    localStorage.removeItem("lv_s");
+    var o = document.getElementById("lv-overlay");
+    o.classList.remove("active");
+    document.getElementById("lv-form").style.display    = "block";
+    document.getElementById("lv-success").style.display = "none";
+    var btn = document.getElementById("lv-btn");
+    btn.disabled = false; btn.textContent = "anotarme ✦";
+    document.getElementById("lv-msg").textContent   = "";
+    document.getElementById("lv-nombre").value      = "";
+    document.getElementById("lv-email").value       = "";
+    document.getElementById("lv-admin-link-wrap").style.display  = "block";
+    document.getElementById("lv-admin-input-wrap").style.display = "none";
+    setTimeout(function(){ o.classList.add("active"); }, 5000);
+  }
+  </script>
+
+  <!-- ═════════════════════════════════════════════
+       FIN POPUP
+  ═════════════════════════════════════════════ -->
+
+
+  
 </body>
 </html>
